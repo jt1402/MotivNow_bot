@@ -12,7 +12,7 @@ let chatId;
 bot.onText(/\/start/, (msg, match) => {
   chatId = msg.chat.id;
   const userId = msg.from.id;
-  if (userId !== 964403295) {
+  if (userId !== <USERID>) {
     bot.sendMessage(chatId, "Sorry, you are not authorized to use this bot.");
     return;
   }
