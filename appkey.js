@@ -36,59 +36,7 @@ bot.on("message", (msg) => {
 
   if (messageText === "Get Message") {
     console.log("Get Message button clicked");
-    try {
-      fetchImage()
-        .then((imageUrl) => {
-          return fetchRandomQuote().then((quote) => {
-            const escapedQuote = quote.replace(/\./g, "\\.");
-            bot.sendPhoto(chatId, imageUrl, {
-              caption: escapedQuote,
-              parse_mode: "MarkdownV2",
-              reply_markup: {
-                keyboard: [
-                  [{ text: "Get Message" }],
-                  [{ text: "Help" }],
-                  [{ text: "Clear" }],
-                ],
-                resize_keyboard: true,
-              },
-            });
-          });
-        })
-        .catch((error) => {
-          console.error("Error sending message:", error.message);
-          bot.sendMessage(
-            chatId,
-            "Sorry, there was an error sending the message. Please try again later.",
-            {
-              reply_markup: {
-                keyboard: [
-                  [{ text: "Get Message" }],
-                  [{ text: "Help" }],
-                  [{ text: "Clear" }],
-                ],
-                resize_keyboard: true,
-              },
-            }
-          );
-        });
-    } catch (error) {
-      console.error("Error sending message:", error.message);
-      bot.sendMessage(
-        chatId,
-        "Sorry, there was an error sending the message. Please try again later.",
-        {
-          reply_markup: {
-            keyboard: [
-              [{ text: "Get Message" }],
-              [{ text: "Help" }],
-              [{ text: "Clear" }],
-            ],
-            resize_keyboard: true,
-          },
-        }
-      );
-    }
+    sendMessage(chatId);
   } else if (messageText === "Help") {
     const helpMessage =
       "This bot allows you to receive random messages with a quote and an image that is close to the context of the given quote.\n\nTo receive a message, simply type or press button 'Get Message'.\n\nTo clear the feed, simply type or press 'Clear'.";
@@ -105,26 +53,28 @@ bot.on("message", (msg) => {
   } else if (messageText === "Clear") {
     bot.sendMessage(chatId, "Feed cleared.", {
       reply_markup: {
-        remove_keyboard: false,
+        remove_keyboard: true,
       },
     });
-  } // Schedule message sending at random times in the morning and afternoon
-  schedule.scheduleJob(
-    { hour: getRandomHour(9, 11), minute: getRandomMinute() },
-    () => {
-      sendScheduledMessage(chatId);
-    }
-  );
-  schedule.scheduleJob(
-    { hour: getRandomHour(13, 17), minute: getRandomMinute() },
-    () => {
-      sendScheduledMessage(chatId);
-    }
-  );
+  }
 });
+// Schedule message sending twice a day: before noon and after at random times
+const morningSchedule = schedule.scheduleJob(
+  { hour: getRandomHour(8, 11), minute: getRandomMinute() },
+  () => {
+    sendMessage(chatId);
+  }
+);
 
-// Function to send scheduled message
-function sendScheduledMessage(chatId) {
+const afternoonSchedule = schedule.scheduleJob(
+  { hour: getRandomHour(13, 17), minute: getRandomMinute() },
+  () => {
+    sendMessage(chatId);
+  }
+);
+
+// Function to send a message with a random quote and image
+function sendMessage(chatId) {
   try {
     fetchImage()
       .then((imageUrl) => {
@@ -189,7 +139,6 @@ function getRandomHour(min, max) {
 function getRandomMinute() {
   return Math.floor(Math.random() * 60);
 }
-
 //ZenQuotes API
 function fetchRandomQuote() {
   return axios
