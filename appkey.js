@@ -3,7 +3,7 @@ const axios = require("axios");
 const fetch = require("node-fetch");
 const schedule = require("node-schedule");
 
-const token = "6098399510:AAGdzgqu_y05vyhif873-AVb2adveyTGywQ";
+const token = "TELEGRAM)BOT_TOKEN";
 const bot = new TelegramBot(token);
 
 let chatId;
@@ -12,7 +12,7 @@ let chatId;
 bot.onText(/\/start/, (msg, match) => {
   chatId = msg.chat.id;
   const userId = msg.from.id;
-  if (userId !== 964403295) {
+  if (userId !== <USERID>) {
     bot.sendMessage(chatId, "Sorry, you are not authorized to use this bot.");
     return;
   }
@@ -147,7 +147,7 @@ function fetchRandomQuote() {
 }
 //Unsplash api
 function fetchImage() {
-  const apikey = "QQnFpH4BAdXKPcMAX89B7lr_GSPHnQzUmxta1aEWPSM";
+  const apikey = "UNSPLASH_API_KEY";
   const url =
     "https://api.unsplash.com/photos/random?query=nature&orientation=landscape";
   return axios
